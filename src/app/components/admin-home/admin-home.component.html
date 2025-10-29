@@ -1,0 +1,67 @@
+<div class="admin">
+  <section class="hero">
+    <div class="hero-left">
+      <h1>Fleet Control</h1>
+      <p class="subtitle">Manage vehicles, owners and drivers in one place.</p>
+    </div>
+    <div class="hero-right">
+      <div class="user-chip" *ngIf="user() as u">
+        <span class="avatar">{{ (u.name || u.email || 'A')[0] | uppercase }}</span>
+        <span class="name">{{ u.name || u.email }}</span>
+      </div>
+      <button class="outline" (click)="logout()">Logout</button>
+    </div>
+  </section>
+
+  <section class="cards">
+    <article class="card vehicle">
+      <div class="card-head">
+        <div class="icon">🚗</div>
+        <h3>Vehicles</h3>
+      </div>
+      <div class="card-body">
+        <div class="metric">{{ vehiclesCount() }}</div>
+        <p class="muted">Total registered</p>
+      </div>
+      <div class="card-actions">
+        <a class="btn primary" routerLink="/admin/vehicles/new">Register vehicle</a>
+      </div>
+    </article>
+
+    <article class="card owner">
+      <div class="card-head">
+        <div class="icon">🧑‍💼</div>
+        <h3>Owners</h3>
+      </div>
+      <div class="card-body">
+        <div class="metric">{{ ownersCount() }}</div>
+        <p class="muted">Registered owners</p>
+      </div>
+      <div class="card-actions">
+        <button class="btn" disabled>Register owner (soon)</button>
+      </div>
+    </article>
+
+    <article class="card driver">
+      <div class="card-head">
+        <div class="icon">🧑‍✈️</div>
+        <h3>Drivers</h3>
+      </div>
+      <div class="card-body">
+        <div class="metric">{{ driversCount() }}</div>
+        <p class="muted">Active drivers</p>
+      </div>
+      <div class="card-actions">
+        <button class="btn" disabled>Register driver (soon)</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="cta">
+    <div class="cta-text">
+      <h2>Quick start</h2>
+      <p>Create a new vehicle, and we’ll associate its owner and driver.</p>
+    </div>
+    <a class="btn primary lg" routerLink="/admin/vehicles/new">Create vehicle</a>
+  </section>
+</div>

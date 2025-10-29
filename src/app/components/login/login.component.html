@@ -1,0 +1,35 @@
+<div class="login-outer">
+  <div class="theme-bar">
+    <div class="theme-item vehicle">Vehicle</div>
+    <div class="theme-item owner">Owner</div>
+    <div class="theme-item driver">Driver</div>
+  </div>
+
+  <div class="login-container">
+    <h2>ACME Fleet — Login</h2>
+
+    <p class="hint">Use the demo credentials below to sign in quickly.</p>
+    <div class="defaults">
+      <code>email: <strong>admin@acme.com</strong></code>
+      <code>password: <strong>123456</strong></code>
+    </div>
+
+    <form (ngSubmit)="submit()">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" [(ngModel)]="email" required />
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" [(ngModel)]="password" required />
+      </div>
+
+      <div class="actions">
+        <button class="primary" type="submit" [disabled]="loading()">{{ loading() ? 'Logging...' : 'Sign in' }}</button>
+      </div>
+
+      <div class="error" *ngIf="error()">{{ error() }}</div>
+    </form>
+  </div>
+</div>

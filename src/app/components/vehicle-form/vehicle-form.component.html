@@ -1,0 +1,64 @@
+<div class="vehicle-form">
+  <h2>Create Vehicle</h2>
+
+  <form (ngSubmit)="submit()">
+    <section>
+      <h3>Vehicle</h3>
+      <label>License plate
+        <input name="license" [(ngModel)]="license_plate" required />
+      </label>
+      <label>Brand
+        <input name="brand" [(ngModel)]="brand" required />
+      </label>
+      <label>Color
+        <input name="color" [(ngModel)]="color" />
+      </label>
+      <label>Type
+        <select name="type" [(ngModel)]="type">
+          <option value="private">Private</option>
+          <option value="commercial">Commercial</option>
+        </select>
+      </label>
+    </section>
+
+    <section>
+      <h3>Owner</h3>
+      <label>Document number
+        <input name="owner_doc" [(ngModel)]="owner_document_number" />
+      </label>
+      <label>First name
+        <input name="owner_first" [(ngModel)]="owner_first_name" />
+      </label>
+      <label>Last name
+        <input name="owner_last" [(ngModel)]="owner_last_name" />
+      </label>
+      <label>Email
+        <input name="owner_email" type="email" [(ngModel)]="owner_email" />
+      </label>
+    </section>
+
+    <section>
+      <h3>Driver</h3>
+      <label>Document number
+        <input name="driver_doc" [(ngModel)]="driver_document_number" />
+      </label>
+      <label>First name
+        <input name="driver_first" [(ngModel)]="driver_first_name" />
+      </label>
+      <label>Last name
+        <input name="driver_last" [(ngModel)]="driver_last_name" />
+      </label>
+      <label>Email
+        <input name="driver_email" type="email" [(ngModel)]="driver_email" />
+      </label>
+    </section>
+
+    <div class="form-actions">
+  <button type="submit" [disabled]="loading()">{{ loading() ? 'Saving...' : 'Save vehicle' }}</button>
+  <button type="button" (click)="cancel()">Cancel</button>
+    </div>
+
+    <div class="error" *ngIf="error()">{{ error() }}</div>
+    <div class="success" *ngIf="success()">{{ success() }}</div>
+  </form>
+</div>

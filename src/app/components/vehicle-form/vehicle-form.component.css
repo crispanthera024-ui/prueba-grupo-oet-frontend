@@ -1,0 +1,9 @@
+.vehicle-form { max-width: 800px; margin: 18px auto; padding: 12px; }
+.vehicle-form h2 { margin-top: 0; }
+section { margin-bottom: 14px; padding: 10px; border:1px solid #eee; border-radius:6px; }
+section h3 { margin:0 0 8px 0; font-size:14px; }
+label { display:block; margin-bottom:8px; }
+input, select { width:100%; padding:8px; box-sizing:border-box; border:1px solid #ddd; border-radius:6px; }
+.form-actions { margin-top:10px; display:flex; gap:8px; justify-content:flex-end; }
+.error { color:#c62828; margin-top:10px; }
+.success { color:#2e7d32; margin-top:10px; }
