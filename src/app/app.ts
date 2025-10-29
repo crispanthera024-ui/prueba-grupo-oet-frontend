@@ -4,6 +4,7 @@ import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
 import { PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -16,12 +17,14 @@ export class App implements OnInit, OnDestroy {
   private storageHandler = (e: StorageEvent) => this.onStorage(e);
   private readonly platformId = inject(PLATFORM_ID);
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router, public theme: ThemeService) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       window.addEventListener('storage', this.storageHandler);
     }
+    // Initialize theme
+    this.theme.init();
   }
 
   ngOnDestroy(): void {
