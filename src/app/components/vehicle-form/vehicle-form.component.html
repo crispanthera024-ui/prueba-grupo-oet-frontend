@@ -1,5 +1,5 @@
 <div class="vehicle-form">
-  <h2>Create Vehicle</h2>
+  <h2>{{ editing() ? 'Edit Vehicle' : 'Create Vehicle' }}</h2>
 
   <form (ngSubmit)="submit()">
     <section>
@@ -54,7 +54,7 @@
     </section>
 
     <div class="form-actions">
-  <button type="submit" [disabled]="loading()">{{ loading() ? 'Saving...' : 'Save vehicle' }}</button>
+  <button type="submit" [disabled]="loading()">{{ loading() ? (editing() ? 'Updating…' : 'Saving…') : (editing() ? 'Update vehicle' : 'Save vehicle') }}</button>
   <button type="button" (click)="cancel()">Cancel</button>
     </div>
 

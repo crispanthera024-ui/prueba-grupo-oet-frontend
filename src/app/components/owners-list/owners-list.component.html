@@ -1,0 +1,39 @@
+<div class="list-wrap">
+  <div class="toolbar">
+    <h2>Owners</h2>
+    <div class="actions">
+      <a class="btn" routerLink="/admin">Back</a>
+      <button class="btn primary" (click)="create()">New owner</button>
+    </div>
+  </div>
+
+  <div class="status" *ngIf="loading()">Loading…</div>
+  <div class="error" *ngIf="error()">{{ error() }}</div>
+
+  <table class="data" *ngIf="!loading()">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Document</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Email</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let o of rows()">
+        <td>{{ o.id }}</td>
+        <td>{{ o.document_number || '-' }}</td>
+        <td>{{ o.first_name || '-' }}</td>
+        <td>{{ o.last_name || '-' }}</td>
+        <td>{{ o.email || '-' }}</td>
+        <td>
+          <button class="btn" (click)="view(o)">View</button>
+          <button class="btn" (click)="edit(o)">Edit</button>
+          <button class="btn danger" (click)="remove(o)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

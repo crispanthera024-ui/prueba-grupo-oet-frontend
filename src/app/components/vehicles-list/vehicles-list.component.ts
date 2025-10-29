@@ -89,8 +89,13 @@ export class VehiclesListComponent implements OnInit {
   }
 
   edit(v: Vehicle) {
-    // Future: implement edit route and form prefill
-    // this.router.navigate([`/admin/vehicles/${v.id}/edit`]);
+    if (!v?.id) return;
+    this.router.navigate([`/admin/vehicles/${v.id}/edit`]);
+  }
+
+  view(v: Vehicle) {
+    if (!v?.id) return;
+    this.router.navigate([`/admin/vehicles/${v.id}`]);
   }
 
   remove(v: Vehicle) {

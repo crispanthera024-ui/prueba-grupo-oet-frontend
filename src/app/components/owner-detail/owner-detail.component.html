@@ -1,0 +1,56 @@
+<div class="detail-wrap">
+  <div class="toolbar">
+    <h2>Owner details</h2>
+    <div class="actions">
+      <a class="btn" routerLink="/admin/owners">Back</a>
+      <button class="btn" (click)="edit()">Edit</button>
+      <button class="btn danger" (click)="remove()">Delete</button>
+    </div>
+  </div>
+
+  <div class="status" *ngIf="loading()">Loading…</div>
+  <div class="error" *ngIf="error()">{{ error() }}</div>
+
+  <ng-container *ngIf="!loading() && owner() as o">
+    <div class="card">
+      <div class="grid">
+        <div>
+          <div class="label">ID</div>
+          <div class="value">{{ o.id }}</div>
+        </div>
+        <div>
+          <div class="label">Document</div>
+          <div class="value">{{ o.document_number || '-' }}</div>
+        </div>
+        <div>
+          <div class="label">First name</div>
+          <div class="value">{{ o.first_name || '-' }}</div>
+        </div>
+        <div>
+          <div class="label">Middle name</div>
+          <div class="value">{{ o.middle_name || '-' }}</div>
+        </div>
+        <div>
+          <div class="label">Last name</div>
+          <div class="value">{{ o.last_name || '-' }}</div>
+        </div>
+        <div>
+          <div class="label">Email</div>
+          <div class="value">{{ o.email || '-' }}</div>
+        </div>
+        <div>
+          <div class="label">Phone</div>
+          <div class="value">{{ o.phone || '-' }}</div>
+        </div>
+        <div>
+          <div class="label">Address</div>
+          <div class="value">{{ o.address || '-' }}</div>
+        </div>
+        <div>
+          <div class="label">City</div>
+          <div class="value">{{ o.city || '-' }}</div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

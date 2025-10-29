@@ -72,6 +72,15 @@ export class AuthService {
     return this._userSubject.value || this._loadUser();
   }
 
+  /**
+   * Sync the in-memory auth state from localStorage. Useful for cross-tab updates.
+   */
+  syncFromStorage(): void {
+    if (!this.isBrowser()) return;
+    const user = this._loadUser();
+    this._userSubject.next(user);
+  }
+
   private _loadUser(): AuthUser | null {
     try {
       if (!this.isBrowser()) return null;

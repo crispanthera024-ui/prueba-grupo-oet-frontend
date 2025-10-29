@@ -34,7 +34,9 @@ export class VehicleService {
   }
 
   get(id: string | number): Observable<Vehicle> {
-    return this.http.get<Vehicle>(`${this.vehiclesPath}/${id}`);
+    return this.http.get<any>(`${this.vehiclesPath}/${id}`).pipe(
+      map((res) => this.normalizeShowResponse(res))
+    );
   }
 
   create(payload: Partial<Vehicle>): Observable<Vehicle> {
@@ -55,6 +57,13 @@ export class VehicleService {
     return this.http.post<any>(this.vehiclesPath, payload);
   }
 
+  /**
+   * Update a vehicle with nested owner and driver payload.
+   */
+  updateFull(id: string | number, payload: any): Observable<any> {
+    return this.http.put<any>(`${this.vehiclesPath}/${id}`, payload);
+  }
+
   update(id: string | number, payload: Partial<Vehicle>): Observable<Vehicle> {
     return this.http.put<Vehicle>(`${this.vehiclesPath}/${id}`, payload);
   }
@@ -70,5 +79,17 @@ export class VehicleService {
     if (Array.isArray(res?.vehicles)) return res.vehicles as Vehicle[];
     if (Array.isArray(res?.vehicles?.data)) return res.vehicles.data as Vehicle[]; // Laravel paginated
     return [];
+  }
+
+  private normalizeShowResponse(res: any): Vehicle {
+    // Accept common shapes for show endpoints
+    const v: any = res?.vehicle ?? res?.data ?? res;
+    if (v && typeof v === 'object') {
+      // Ensure camelCase aliases exist if needed
+      if (v.owner_id != null && v.ownerId == null) v.ownerId = v.owner_id;
+      if (v.driver_id != null && v.driverId == null) v.driverId = v.driver_id;
+      return v as Vehicle;
+    }
+    return v as Vehicle;
   }
 }

@@ -1,0 +1,41 @@
+<div class="owner-form">
+  <h2>{{ editing() ? 'Edit owner' : 'Create owner' }}</h2>
+
+  <form (ngSubmit)="save()">
+    <div class="grid">
+      <label>Document number
+        <input [(ngModel)]="document_number" name="document_number" required />
+      </label>
+      <label>First name
+        <input [(ngModel)]="first_name" name="first_name" required />
+      </label>
+      <label>Middle name
+        <input [(ngModel)]="middle_name" name="middle_name" />
+      </label>
+      <label>Last name
+        <input [(ngModel)]="last_name" name="last_name" required />
+      </label>
+      <label>Address
+        <input [(ngModel)]="address" name="address" />
+      </label>
+      <label>Phone
+        <input [(ngModel)]="phone" name="phone" />
+      </label>
+      <label>City
+        <input [(ngModel)]="city" name="city" />
+      </label>
+      <label>Email
+        <input [(ngModel)]="email" name="email" type="email" />
+      </label>
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" type="submit" [disabled]="loading()">{{ loading() ? (editing() ? 'Updating…' : 'Creating…') : (editing() ? 'Update' : 'Create') }}</button>
+      <button class="btn" type="button" (click)="cancel()">Cancel</button>
+    </div>
+
+    <div class="status" *ngIf="loading()">Saving…</div>
+    <div class="error" *ngIf="error()">{{ error() }}</div>
+    <div class="success" *ngIf="success()">{{ success() }}</div>
+  </form>
+</div>

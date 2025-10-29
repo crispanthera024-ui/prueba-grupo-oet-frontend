@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Owner } from '../models/owner';
 
 @Injectable({ providedIn: 'root' })
@@ -9,11 +9,11 @@ export class OwnerService {
   constructor(private http: HttpClient) {}
 
   list(): Observable<Owner[]> {
-    return this.http.get<Owner[]>(this.api);
+    return this.http.get<any>(this.api).pipe(map((res) => this.normalizeList(res)));
   }
 
   get(id: number): Observable<Owner> {
-    return this.http.get<Owner>(`${this.api}/${id}`);
+    return this.http.get<any>(`${this.api}/${id}`).pipe(map((res) => this.normalizeShow(res)));
   }
 
   create(payload: Partial<Owner>): Observable<Owner> {
@@ -26,5 +26,16 @@ export class OwnerService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.api}/${id}`);
+  }
+
+  private normalizeList(res: any): Owner[] {
+    if (Array.isArray(res)) return res as Owner[];
+    if (Array.isArray(res?.data)) return res.data as Owner[]; // Laravel paginator
+    if (Array.isArray(res?.owners?.data)) return res.owners.data as Owner[];
+    return [];
+  }
+
+  private normalizeShow(res: any): Owner {
+    return (res?.owner ?? res?.data ?? res) as Owner;
   }
 }

@@ -24,13 +24,16 @@
     </thead>
     <tbody>
       <tr *ngFor="let v of rows()">
-        <td>{{ v.license_plate }}</td>
+        <td>
+          <a class="link" (click)="view(v)">{{ v.license_plate }}</a>
+        </td>
         <td>{{ v.brand || '-' }}</td>
         <td>{{ v.color || '-' }}</td>
         <td>{{ v.type || '-' }}</td>
         <td>{{ v.owner ? (v.owner.first_name + ' ' + v.owner.last_name) : '-' }}</td>
         <td>{{ v.driver ? (v.driver.first_name + ' ' + v.driver.last_name) : '-' }}</td>
         <td>
+          <button class="btn" (click)="view(v)">View</button>
           <button class="btn" (click)="edit(v)">Edit</button>
           <button class="btn danger" (click)="remove(v)">Delete</button>
         </td>

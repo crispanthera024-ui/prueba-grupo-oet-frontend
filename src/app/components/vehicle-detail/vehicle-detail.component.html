@@ -1,0 +1,87 @@
+<div class="detail-wrap">
+  <div class="toolbar">
+    <h2>Vehicle details</h2>
+    <div class="actions">
+      <a class="btn" routerLink="/admin/vehicles">Back</a>
+      <button class="btn" (click)="edit()">Edit</button>
+      <button class="btn danger" (click)="remove()">Delete</button>
+    </div>
+  </div>
+
+  <div class="status" *ngIf="loading()">Loading…</div>
+  <div class="error" *ngIf="error()">{{ error() }}</div>
+
+  <ng-container *ngIf="!loading() && vehicle() as v">
+    <div class="card">
+      <h3>{{ v.license_plate }}</h3>
+      <div class="grid">
+        <div>
+          <div class="label">Brand</div>
+          <div class="value">{{ v.brand || '-' }}</div>
+        </div>
+        <div>
+          <div class="label">Color</div>
+          <div class="value">{{ v.color || '-' }}</div>
+        </div>
+        <div>
+          <div class="label">Type</div>
+          <div class="value">{{ v.type || '-' }}</div>
+        </div>
+        <div>
+          <div class="label">Owner ID</div>
+          <div class="value">{{ v.owner_id ?? v.ownerId ?? '-' }}</div>
+        </div>
+        <div>
+          <div class="label">Driver ID</div>
+          <div class="value">{{ v.driver_id ?? v.driverId ?? '-' }}</div>
+        </div>
+        <div>
+          <div class="label">Created</div>
+          <div class="value">{{ v.created_at || '-' }}</div>
+        </div>
+        <div>
+          <div class="label">Updated</div>
+          <div class="value">{{ v.updated_at || '-' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns">
+      <div class="card">
+        <h4>Owner</h4>
+        <div class="grid">
+          <div>
+            <div class="label">Document</div>
+            <div class="value">{{ v.owner?.document_number || '-' }}</div>
+          </div>
+          <div>
+            <div class="label">Name</div>
+            <div class="value">{{ (v.owner?.first_name || '') + ' ' + (v.owner?.last_name || '') || '-' }}</div>
+          </div>
+          <div>
+            <div class="label">Email</div>
+            <div class="value">{{ v.owner?.email || '-' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4>Driver</h4>
+        <div class="grid">
+          <div>
+            <div class="label">Document</div>
+            <div class="value">{{ v.driver?.document_number || '-' }}</div>
+          </div>
+          <div>
+            <div class="label">Name</div>
+            <div class="value">{{ (v.driver?.first_name || '') + ' ' + (v.driver?.last_name || '') || '-' }}</div>
+          </div>
+          <div>
+            <div class="label">Email</div>
+            <div class="value">{{ v.driver?.email || '-' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
