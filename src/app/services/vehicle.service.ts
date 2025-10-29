@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map } from 'rxjs';
+import { Observable, Subject, catchError, map, shareReplay, startWith, switchMap, tap } from 'rxjs';
 import { Vehicle } from '../models/vehicle';
 
 @Injectable({ providedIn: 'root' })
@@ -10,7 +10,23 @@ export class VehicleService {
   private readonly vehiclePath = `${this.base}/vehicle`; // some backends expose singular
   constructor(private http: HttpClient) {}
 
-  list(): Observable<Vehicle[]> {
+  private listInvalidate$ = new Subject<void>();
+  private listCache$?: Observable<Vehicle[]>;
+
+  /** Cached list with manual invalidation. */
+  listCached(): Observable<Vehicle[]> {
+    if (!this.listCache$) {
+      this.listCache$ = this.listInvalidate$.pipe(
+        startWith(void 0),
+        switchMap(() => this.fetchList()),
+        shareReplay(1)
+      );
+    }
+    return this.listCache$;
+  }
+
+  /** Raw list without caching. */
+  private fetchList(): Observable<Vehicle[]> {
     // Try the conventional plural endpoint first, then fall back to singular if needed.
     return this.http.get<any>(this.vehiclesPath).pipe(
       map((res) => this.normalizeListResponse(res)),
@@ -19,6 +35,9 @@ export class VehicleService {
       )
     );
   }
+
+  /** Backwards-compatible method name used by existing code. */
+  list(): Observable<Vehicle[]> { return this.listCached(); }
 
   listWithMeta(): Observable<{ data: Vehicle[]; total: number }> {
     return this.http.get<any>(this.vehiclesPath).pipe(
@@ -54,22 +73,26 @@ export class VehicleService {
    */
   createFull(payload: any): Observable<any> {
     // POST to the vehicles endpoint; adjust if backend expects a different URL
-    return this.http.post<any>(this.vehiclesPath, payload);
+    return this.http.post<any>(this.vehiclesPath, payload).pipe(tap(() => this.invalidateListCache()));
   }
 
   /**
    * Update a vehicle with nested owner and driver payload.
    */
   updateFull(id: string | number, payload: any): Observable<any> {
-    return this.http.put<any>(`${this.vehiclesPath}/${id}`, payload);
+    return this.http.put<any>(`${this.vehiclesPath}/${id}`, payload).pipe(tap(() => this.invalidateListCache()));
   }
 
   update(id: string | number, payload: Partial<Vehicle>): Observable<Vehicle> {
-    return this.http.put<Vehicle>(`${this.vehiclesPath}/${id}`, payload);
+    return this.http.put<Vehicle>(`${this.vehiclesPath}/${id}`, payload).pipe(tap(() => this.invalidateListCache()));
   }
 
   delete(id: string | number): Observable<void> {
-    return this.http.delete<void>(`${this.vehiclesPath}/${id}`);
+    return this.http.delete<void>(`${this.vehiclesPath}/${id}`).pipe(tap(() => this.invalidateListCache()));
+  }
+
+  invalidateListCache() {
+    this.listInvalidate$.next();
   }
 
   private normalizeListResponse(res: any): Vehicle[] {

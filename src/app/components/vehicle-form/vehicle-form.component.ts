@@ -76,14 +76,20 @@ export class VehicleFormComponent implements OnInit {
         this.brand = v.brand ?? '';
         this.color = v.color ?? null;
         this.type = v.type ?? 'private';
-        // set modes based on presence of ids
-        if (v.owner_id) {
+        // set modes based on presence of nested relations or id aliases
+        if (v.owner?.id != null) {
           this.ownerMode.set('existing');
-          this.existingOwnerId = Number(v.owner_id);
+          this.existingOwnerId = Number(v.owner.id);
+        } else if ((v as any).owner_id != null) {
+          this.ownerMode.set('existing');
+          this.existingOwnerId = Number((v as any).owner_id);
         }
-        if (v.driver_id) {
+        if (v.driver?.id != null) {
           this.driverMode.set('existing');
-          this.existingDriverId = Number(v.driver_id);
+          this.existingDriverId = Number(v.driver.id);
+        } else if ((v as any).driver_id != null) {
+          this.driverMode.set('existing');
+          this.existingDriverId = Number((v as any).driver_id);
         }
         if (v.owner) {
           this.owner_document_number = v.owner.document_number ?? '';
@@ -143,9 +149,9 @@ export class VehicleFormComponent implements OnInit {
       }
     };
 
-    // Owner section: either reference existing by id or provide nested object
+    // Owner section (required): either reference existing by id or provide nested object
     if (this.ownerMode() === 'existing' && this.existingOwnerId) {
-      payload.owner_id = this.existingOwnerId;
+      payload.owner = { id: this.existingOwnerId };
     } else {
       payload.owner = {
         document_number: this.owner_document_number,
@@ -155,16 +161,19 @@ export class VehicleFormComponent implements OnInit {
       };
     }
 
-    // Driver section
+    // Driver section (optional)
     if (this.driverMode() === 'existing' && this.existingDriverId) {
-      payload.driver_id = this.existingDriverId;
+      payload.driver = { id: this.existingDriverId };
     } else {
-      payload.driver = {
-        document_number: this.driver_document_number,
-        first_name: this.driver_first_name,
-        last_name: this.driver_last_name,
-        email: this.driver_email
-      };
+      const hasDriverFields = !!(this.driver_document_number || this.driver_first_name || this.driver_last_name || this.driver_email);
+      if (hasDriverFields) {
+        payload.driver = {
+          document_number: this.driver_document_number,
+          first_name: this.driver_first_name,
+          last_name: this.driver_last_name,
+          email: this.driver_email
+        };
+      }
     }
 
     const afterSuccess = (msg: string) => {

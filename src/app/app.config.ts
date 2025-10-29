@@ -1,6 +1,6 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withFetch } from '@angular/common/http';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { routes } from './app.routes';
@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
     // Provide HttpClient and allow interceptors from DI
-    provideHttpClient(withInterceptorsFromDi()),
+  provideHttpClient(withInterceptorsFromDi(), withFetch()),
     // Register the auth interceptor so outgoing requests include the bearer token
     {
       provide: HTTP_INTERCEPTORS,
