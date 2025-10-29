@@ -12,6 +12,11 @@ export const routes: Routes = [
 		{ path: 'admin/owners/new', loadComponent: () => import('./components/owner-form/owner-form.component').then(m => m.OwnerFormComponent), canActivate: [() => import('./guards/auth.guard').then(m=>m.AuthGuard)] },
 		{ path: 'admin/owners/:id', loadComponent: () => import('./components/owner-detail/owner-detail.component').then(m => m.OwnerDetailComponent), canActivate: [() => import('./guards/auth.guard').then(m=>m.AuthGuard)] },
 		{ path: 'admin/owners/:id/edit', loadComponent: () => import('./components/owner-form/owner-form.component').then(m => m.OwnerFormComponent), canActivate: [() => import('./guards/auth.guard').then(m=>m.AuthGuard)] },
+		// Drivers CRUD
+		{ path: 'admin/drivers', loadComponent: () => import('./components/drivers-list/drivers-list.component').then(m => m.DriversListComponent), canActivate: [() => import('./guards/auth.guard').then(m=>m.AuthGuard)] },
+		{ path: 'admin/drivers/new', loadComponent: () => import('./components/driver-form/driver-form.component').then(m => m.DriverFormComponent), canActivate: [() => import('./guards/auth.guard').then(m=>m.AuthGuard)] },
+		{ path: 'admin/drivers/:id', loadComponent: () => import('./components/driver-detail/driver-detail.component').then(m => m.DriverDetailComponent), canActivate: [() => import('./guards/auth.guard').then(m=>m.AuthGuard)] },
+		{ path: 'admin/drivers/:id/edit', loadComponent: () => import('./components/driver-form/driver-form.component').then(m => m.DriverFormComponent), canActivate: [() => import('./guards/auth.guard').then(m=>m.AuthGuard)] },
 	{ path: '', redirectTo: '/admin', pathMatch: 'full' },
 	{ path: '**', redirectTo: '/admin' }
 ];

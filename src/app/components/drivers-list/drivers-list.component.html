@@ -1,0 +1,39 @@
+<div class="list-wrap">
+  <div class="toolbar">
+    <h2>Drivers</h2>
+    <div class="actions">
+      <a class="btn" routerLink="/admin">Back</a>
+      <button class="btn primary" (click)="create()">New driver</button>
+    </div>
+  </div>
+
+  <div class="status" *ngIf="loading()">Loading…</div>
+  <div class="error" *ngIf="error()">{{ error() }}</div>
+
+  <table class="data" *ngIf="!loading()">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Document</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Email</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let d of rows()">
+        <td>{{ d.id }}</td>
+        <td>{{ d.document_number || '-' }}</td>
+        <td>{{ d.first_name || '-' }}</td>
+        <td>{{ d.last_name || '-' }}</td>
+        <td>{{ d.email || '-' }}</td>
+        <td>
+          <button class="btn" (click)="view(d)">View</button>
+          <button class="btn" (click)="edit(d)">Edit</button>
+          <button class="btn danger" (click)="remove(d)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

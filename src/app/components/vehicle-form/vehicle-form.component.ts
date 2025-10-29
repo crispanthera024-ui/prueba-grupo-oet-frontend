@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { VehicleService } from '../../services/vehicle.service';
+import { UserService } from '../../services/user.service';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-vehicle-form',
@@ -17,6 +19,17 @@ export class VehicleFormComponent implements OnInit {
   success = signal('');
   editing = signal(false);
   vehicleId: string | null = null;
+  // owner/driver selection mode
+  ownerMode = signal<'new' | 'existing'>('new');
+  driverMode = signal<'new' | 'existing'>('new');
+  existingOwnerId: number | null = null;
+  existingDriverId: number | null = null;
+  ownerOptions = signal<User[]>([]);
+  driverOptions = signal<User[]>([]);
+  ownerOptionsLoading = signal(false);
+  driverOptionsLoading = signal(false);
+  ownerOptionsError = signal('');
+  driverOptionsError = signal('');
 
   // vehicle fields
   license_plate = '';
@@ -36,10 +49,18 @@ export class VehicleFormComponent implements OnInit {
   driver_last_name = '';
   driver_email = '';
 
-  constructor(private vehicleService: VehicleService, private router: Router, private route: ActivatedRoute) {}
+  constructor(
+    private vehicleService: VehicleService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private users: UserService
+  ) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
+    // Preload options for selects
+    this.loadOwnerOptions();
+    this.loadDriverOptions();
     if (id) {
       this.editing.set(true);
       this.vehicleId = id;
@@ -55,6 +76,15 @@ export class VehicleFormComponent implements OnInit {
         this.brand = v.brand ?? '';
         this.color = v.color ?? null;
         this.type = v.type ?? 'private';
+        // set modes based on presence of ids
+        if (v.owner_id) {
+          this.ownerMode.set('existing');
+          this.existingOwnerId = Number(v.owner_id);
+        }
+        if (v.driver_id) {
+          this.driverMode.set('existing');
+          this.existingDriverId = Number(v.driver_id);
+        }
         if (v.owner) {
           this.owner_document_number = v.owner.document_number ?? '';
           this.owner_first_name = v.owner.first_name ?? '';
@@ -76,6 +106,24 @@ export class VehicleFormComponent implements OnInit {
     });
   }
 
+  loadOwnerOptions() {
+    this.ownerOptionsLoading.set(true);
+    this.ownerOptionsError.set('');
+    this.users.list({ role: 'Owner' }).subscribe({
+      next: (arr: User[]) => { this.ownerOptions.set(arr || []); this.ownerOptionsLoading.set(false); },
+      error: (err: any) => { this.ownerOptionsLoading.set(false); this.ownerOptionsError.set(err?.error?.message || 'Failed to load owners'); }
+    });
+  }
+
+  loadDriverOptions() {
+    this.driverOptionsLoading.set(true);
+    this.driverOptionsError.set('');
+    this.users.list({ role: 'Driver' }).subscribe({
+      next: (arr: User[]) => { this.driverOptions.set(arr || []); this.driverOptionsLoading.set(false); },
+      error: (err: any) => { this.driverOptionsLoading.set(false); this.driverOptionsError.set(err?.error?.message || 'Failed to load drivers'); }
+    });
+  }
+
   cancel() {
     // navigate back to vehicles list
     this.router.navigate(['/admin/vehicles']);
@@ -86,26 +134,38 @@ export class VehicleFormComponent implements OnInit {
     this.success.set('');
     this.loading.set(true);
 
-    const payload = {
+    const payload: any = {
       vehicle: {
         license_plate: this.license_plate,
         brand: this.brand,
         color: this.color,
         type: this.type
-      },
-      owner: {
+      }
+    };
+
+    // Owner section: either reference existing by id or provide nested object
+    if (this.ownerMode() === 'existing' && this.existingOwnerId) {
+      payload.owner_id = this.existingOwnerId;
+    } else {
+      payload.owner = {
         document_number: this.owner_document_number,
         first_name: this.owner_first_name,
         last_name: this.owner_last_name,
         email: this.owner_email
-      },
-      driver: {
+      };
+    }
+
+    // Driver section
+    if (this.driverMode() === 'existing' && this.existingDriverId) {
+      payload.driver_id = this.existingDriverId;
+    } else {
+      payload.driver = {
         document_number: this.driver_document_number,
         first_name: this.driver_first_name,
         last_name: this.driver_last_name,
         email: this.driver_email
-      }
-    };
+      };
+    }
 
     const afterSuccess = (msg: string) => {
       this.loading.set(false);

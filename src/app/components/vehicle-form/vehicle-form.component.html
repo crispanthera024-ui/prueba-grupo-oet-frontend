@@ -23,34 +23,68 @@
 
     <section>
       <h3>Owner</h3>
-      <label>Document number
-        <input name="owner_doc" [(ngModel)]="owner_document_number" />
-      </label>
-      <label>First name
-        <input name="owner_first" [(ngModel)]="owner_first_name" />
-      </label>
-      <label>Last name
-        <input name="owner_last" [(ngModel)]="owner_last_name" />
-      </label>
-      <label>Email
-        <input name="owner_email" type="email" [(ngModel)]="owner_email" />
-      </label>
+      <div class="toggle">
+        <label><input type="radio" name="ownerMode" [checked]="ownerMode()==='new'" (change)="ownerMode.set('new')"> Create new</label>
+        <label><input type="radio" name="ownerMode" [checked]="ownerMode()==='existing'" (change)="ownerMode.set('existing')"> Use existing</label>
+      </div>
+
+      <ng-container *ngIf="ownerMode() === 'existing'; else newOwnerTpl">
+        <label>Owner
+          <select name="owner_select" [(ngModel)]="existingOwnerId">
+            <option [ngValue]="null">Select owner…</option>
+            <option *ngFor="let u of ownerOptions()" [ngValue]="u.id">{{ u.first_name || u.name }} {{ u.last_name || '' }} ({{ u.email || 'no email' }}) — #{{ u.id }}</option>
+          </select>
+        </label>
+        <div class="status" *ngIf="ownerOptionsLoading()">Loading owners…</div>
+        <div class="error" *ngIf="ownerOptionsError()">{{ ownerOptionsError() }}</div>
+      </ng-container>
+      <ng-template #newOwnerTpl>
+        <label>Document number
+          <input name="owner_doc" [(ngModel)]="owner_document_number" />
+        </label>
+        <label>First name
+          <input name="owner_first" [(ngModel)]="owner_first_name" />
+        </label>
+        <label>Last name
+          <input name="owner_last" [(ngModel)]="owner_last_name" />
+        </label>
+        <label>Email
+          <input name="owner_email" type="email" [(ngModel)]="owner_email" />
+        </label>
+      </ng-template>
     </section>
 
     <section>
       <h3>Driver</h3>
-      <label>Document number
-        <input name="driver_doc" [(ngModel)]="driver_document_number" />
-      </label>
-      <label>First name
-        <input name="driver_first" [(ngModel)]="driver_first_name" />
-      </label>
-      <label>Last name
-        <input name="driver_last" [(ngModel)]="driver_last_name" />
-      </label>
-      <label>Email
-        <input name="driver_email" type="email" [(ngModel)]="driver_email" />
-      </label>
+      <div class="toggle">
+        <label><input type="radio" name="driverMode" [checked]="driverMode()==='new'" (change)="driverMode.set('new')"> Create new</label>
+        <label><input type="radio" name="driverMode" [checked]="driverMode()==='existing'" (change)="driverMode.set('existing')"> Use existing</label>
+      </div>
+
+      <ng-container *ngIf="driverMode() === 'existing'; else newDriverTpl">
+        <label>Driver
+          <select name="driver_select" [(ngModel)]="existingDriverId">
+            <option [ngValue]="null">Select driver…</option>
+            <option *ngFor="let u of driverOptions()" [ngValue]="u.id">{{ u.first_name || u.name }} {{ u.last_name || '' }} ({{ u.email || 'no email' }}) — #{{ u.id }}</option>
+          </select>
+        </label>
+        <div class="status" *ngIf="driverOptionsLoading()">Loading drivers…</div>
+        <div class="error" *ngIf="driverOptionsError()">{{ driverOptionsError() }}</div>
+      </ng-container>
+      <ng-template #newDriverTpl>
+        <label>Document number
+          <input name="driver_doc" [(ngModel)]="driver_document_number" />
+        </label>
+        <label>First name
+          <input name="driver_first" [(ngModel)]="driver_first_name" />
+        </label>
+        <label>Last name
+          <input name="driver_last" [(ngModel)]="driver_last_name" />
+        </label>
+        <label>Email
+          <input name="driver_email" type="email" [(ngModel)]="driver_email" />
+        </label>
+      </ng-template>
     </section>
 
     <div class="form-actions">

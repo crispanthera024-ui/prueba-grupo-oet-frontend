@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Driver } from '../models/driver';
 
 @Injectable({ providedIn: 'root' })
@@ -9,11 +9,11 @@ export class DriverService {
   constructor(private http: HttpClient) {}
 
   list(): Observable<Driver[]> {
-    return this.http.get<Driver[]>(this.api);
+    return this.http.get<any>(this.api).pipe(map((res) => this.normalizeList(res)));
   }
 
   get(id: number): Observable<Driver> {
-    return this.http.get<Driver>(`${this.api}/${id}`);
+    return this.http.get<any>(`${this.api}/${id}`).pipe(map((res) => this.normalizeShow(res)));
   }
 
   create(payload: Partial<Driver>): Observable<Driver> {
@@ -26,5 +26,16 @@ export class DriverService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.api}/${id}`);
+  }
+
+  private normalizeList(res: any): Driver[] {
+    if (Array.isArray(res)) return res as Driver[];
+    if (Array.isArray(res?.data)) return res.data as Driver[]; // Laravel paginator
+    if (Array.isArray(res?.drivers?.data)) return res.drivers.data as Driver[];
+    return [];
+  }
+
+  private normalizeShow(res: any): Driver {
+    return (res?.driver ?? res?.data ?? res) as Driver;
   }
 }

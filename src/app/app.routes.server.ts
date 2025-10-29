@@ -6,6 +6,8 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'admin/vehicles/:id/edit', renderMode: RenderMode.Server },
   { path: 'admin/owners/:id', renderMode: RenderMode.Server },
   { path: 'admin/owners/:id/edit', renderMode: RenderMode.Server },
+  { path: 'admin/drivers/:id', renderMode: RenderMode.Server },
+  { path: 'admin/drivers/:id/edit', renderMode: RenderMode.Server },
 
   // Fallback to prerender for other static routes
   { path: '**', renderMode: RenderMode.Prerender }
