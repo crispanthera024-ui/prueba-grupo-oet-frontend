@@ -1,0 +1,40 @@
+<div class="list-wrap">
+  <div class="toolbar">
+    <h2>Vehicles</h2>
+    <div class="actions">
+      <a class="btn" routerLink="/admin">Back</a>
+      <button class="btn primary" (click)="create()">New vehicle</button>
+    </div>
+  </div>
+
+  <div class="status" *ngIf="loading()">Loading…</div>
+  <div class="error" *ngIf="error()">{{ error() }}</div>
+
+  <table class="data" *ngIf="!loading()">
+    <thead>
+      <tr>
+        <th>Plate</th>
+        <th>Brand</th>
+        <th>Color</th>
+        <th>Type</th>
+        <th>Owner</th>
+        <th>Driver</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let v of rows()">
+        <td>{{ v.license_plate }}</td>
+        <td>{{ v.brand || '-' }}</td>
+        <td>{{ v.color || '-' }}</td>
+        <td>{{ v.type || '-' }}</td>
+        <td>{{ v.owner ? (v.owner.first_name + ' ' + v.owner.last_name) : '-' }}</td>
+        <td>{{ v.driver ? (v.driver.first_name + ' ' + v.driver.last_name) : '-' }}</td>
+        <td>
+          <button class="btn" (click)="edit(v)">Edit</button>
+          <button class="btn danger" (click)="remove(v)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

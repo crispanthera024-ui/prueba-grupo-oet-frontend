@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, of, switchMap } from 'rxjs';
+import { Observable, catchError, map } from 'rxjs';
 import { Vehicle } from '../models/vehicle';
 
 @Injectable({ providedIn: 'root' })
@@ -20,7 +20,20 @@ export class VehicleService {
     );
   }
 
-  get(id: number): Observable<Vehicle> {
+  listWithMeta(): Observable<{ data: Vehicle[]; total: number }> {
+    return this.http.get<any>(this.vehiclesPath).pipe(
+      map((res) => {
+        const data = this.normalizeListResponse(res);
+        const total =
+          (typeof res?.meta?.total === 'number' && res.meta.total) ||
+          (typeof res?.vehicles?.total === 'number' && res.vehicles.total) ||
+          (Array.isArray(data) ? data.length : 0);
+        return { data, total };
+      })
+    );
+  }
+
+  get(id: string | number): Observable<Vehicle> {
     return this.http.get<Vehicle>(`${this.vehiclesPath}/${id}`);
   }
 
@@ -42,11 +55,11 @@ export class VehicleService {
     return this.http.post<any>(this.vehiclesPath, payload);
   }
 
-  update(id: number, payload: Partial<Vehicle>): Observable<Vehicle> {
+  update(id: string | number, payload: Partial<Vehicle>): Observable<Vehicle> {
     return this.http.put<Vehicle>(`${this.vehiclesPath}/${id}`, payload);
   }
 
-  delete(id: number): Observable<void> {
+  delete(id: string | number): Observable<void> {
     return this.http.delete<void>(`${this.vehiclesPath}/${id}`);
   }
 
@@ -55,6 +68,7 @@ export class VehicleService {
     if (Array.isArray(res)) return res as Vehicle[];
     if (Array.isArray(res?.data)) return res.data as Vehicle[];
     if (Array.isArray(res?.vehicles)) return res.vehicles as Vehicle[];
+    if (Array.isArray(res?.vehicles?.data)) return res.vehicles.data as Vehicle[]; // Laravel paginated
     return [];
   }
 }
